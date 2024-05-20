@@ -1,0 +1,83 @@
+spring:
+  application:
+    name: spring-cloud-gateway
+
+  cloud:
+    gateway:
+      routes:
+        # Path Route Predicate Factory And Circuit Breaker Gateway Filter
+        - id: catalogservice
+          uri: lb://catalogservice
+          predicates:
+            - Path=/v1/lifecycle/catalog/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: CircuitBreaker
+                fallbackUri: forward:/lifecycle/v1/stocks-inventory/
+        - id:  productstocksservice
+          uri: lb://productstocksservice
+          predicates:
+            - Path=/lifecycle/v1/stocks-inventory/
+
+        - id: circuitbreakerservice
+          uri: lb://circuitbreakerservice
+          predicates:
+            - Path=/matrix/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+        # Path Route Predicate Factory
+        - id: circuitbreakerservice
+          uri: lb://circuitbreakerservice
+          predicates:
+            - Path=/metrix/count/gateway/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+              # deny-empty-key: false
+                key-resolver: "#{@userKeyResolver}"
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 60
+                redis-rate-limiter.requestedTokens: 60
+
+        # Path Route Predicate Factory
+        - id: productenquiryservice
+          uri: lb://productenquiryservice
+          predicates:
+            - Path=/lifecycle/v1/enquiry-stock/**
+        - id: productstocksservice
+          uri: lb://productstocksservice
+          predicates:
+            - Path=/lifecycle/v1/stocks-inventory/**
+        # Method Route Predicate Factory
+        - id: inventoryService
+          uri: lb://inventoryservice
+          predicates:
+            - Method=GET,POST
+        # Header Route Predicate Factory
+        - id: productenquiryservice
+          uri: lb://productenquiryservice
+          predicates:
+            - Header= X-Request-Id,\d+
+        # Remote Address Route Predicate Factory
+        - id: productenquiryservice
+          uri: lb://productenquiryservice
+          predicates:
+            - RemoteAddr=192.168.1.4
+
+server:
+  port: 9010
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    prefer-same-zone-eureka: true
+  instance:
+    hostname: localhost
+
+

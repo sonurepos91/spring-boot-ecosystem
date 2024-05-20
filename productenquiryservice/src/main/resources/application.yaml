@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: productenquiryservice
+
+  profiles:
+    active: test
+  cloud:
+    openfeign:
+      httpclient:
+        connection-timeout: 10000
+        ok-http:
+          read-timeout: 1000000
+
+server:
+  port: 8762
+  servlet:
+    context-path: /lifecycle/v1/
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    registry-fetch-interval-seconds: 90
+    instance-info-replication-interval-seconds: 60
+  instance:
+    hostname: localhost
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "refresh,health,info,loggers,env,beans,metrics,threaddump"
+
+
+
+

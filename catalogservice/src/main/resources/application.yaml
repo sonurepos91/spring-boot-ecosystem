@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: catalogservice
+
+server:
+  port: 8050
+  servlet:
+    context-path: /v1/lifecycle/catalog
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true

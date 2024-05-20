@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: eurekadiscoveryserver
+  profiles:
+    active: stage
+
+server:
+  port: 8761
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+  instance:
+    hostname: localhost
+  #serviceUrl:
+      #defaultZone: http://sonu:test@reference:8762

@@ -1,0 +1,82 @@
+spring:
+  application:
+    name: circuitbreakerservice
+
+server:
+  port: 9050
+  servlet:
+    context-path: /metrix
+
+# Circuit Breaker Configurations
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+# Circuit Breaker On Instances Service
+resilience4j:
+  circuitbreaker:
+    instances:
+      productstockservice:
+        sliding-window-type: count_based
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled : true
+        eventConsumerBufferSize : 10
+        writable-stack-trace-enabled: true
+        register-health-indicator: true
+
+  # Retry
+  retry:
+    instances:
+      productstockservice:
+        max-attempts: 3
+        wait-duration: 2s
+
+ # Bulk Head Circuit Breaker
+  bulkhead:
+    instances:
+      productstockservice:
+        max-concurrent-calls: 6
+        max-wait-duration: 1s
+
+
+# Rate Limiter
+  ratelimiter:
+    instances:
+      productstockservice:
+        limit-for-period: 5
+        limit-refresh-period: 60s
+        register-health-indicator: true
+
+
+
+
+
+
+# Sliding-Window Time Based Circuit Breaker Configurations
+#resilience4j.circuitbreaker:
+#  configs:
+#   default:
+#     sliding-window-type: time_based
+#     sliding-window-size: 100
+#     minimum-number-of-calls: 15
+#     slow-call-rate-threshold: 50
+#     slow-call-duration-threshold: 2s
+#     waitDurationInOpenState: 5s
+#     max-wait-duration-in-half-open-state: 10s
+#     automaticTransitionFromOpenToHalfOpenEnabled: true
+
+
+
+

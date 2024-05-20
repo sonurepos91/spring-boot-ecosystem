@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: productstocksservice
+  profiles:
+    active: dev
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/commerce
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+    hikari:
+      #Pool Settings
+      pool-name: HikariPool
+      maximum-pool-size: 10
+
+      #Pool Timeout Settings
+      #connection-timeout: 30000 # Maximum Time a client will wait in milliseconds to get a Connection from Connection Pool
+      #idle-timeout: 60000 # Maximum Time a Connection Object can remain idle in the Connection Pool
+      #max-lifetime: 1800000 # Maximum Life of a Connection Object in Connection Pool
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+
+
+server:
+  port: 8766
+  servlet:
+    context-path: /lifecycle/v1/stocks-inventory
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "refresh,health,info,loggers,env,beans,metrics,threaddump"
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    registry-fetch-interval-seconds: 90
+    instance-info-replication-interval-seconds: 60
+  instance:
+    hostname: localhost
